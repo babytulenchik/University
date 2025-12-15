@@ -13,6 +13,10 @@ app = FastAPI()
 def get_all_students():
     return json_to_dict_list(path_to_json)
 
+@app.get("/")
+def home_page():
+    return {"message": "python"}
+
 @app.get("/students/{course}")
 def get_all_students_course(course: int):
     students = json_to_dict_list(path_to_json)
@@ -33,3 +37,19 @@ def get_all_student(course: Optional[int]=None):
             if student["course"] == course:
                 return_list.append(student)
         return return_list
+    
+@app.get("/students/{course}")
+def get_all_student_course(course: int, major: Optional[str]=None, enrollment_year: Optional[str]=2018):
+    students = json_to_dict_list(path_to_json)
+    filtered_students = []
+    for student in students:
+        if student["course"] == course:
+            filtered_students.append(student)
+
+    if major:
+        filtered_students = [student for student in filtered_students if student['major'].lower()==major.lower()]
+
+    if enrollment_year:
+        filtered_students = [student for student in filtered_students if student['enrollments_year']==enrollment_year]
+
+    return filtered_students
